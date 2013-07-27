@@ -40,6 +40,43 @@ module Hangman
       end
     end
 
+    describe '#incorrect_guesses' do
+      it 'a list of incorrectly guessed letters' do
+        game = Game.new('hangman')
+        game.guess 'a'
+        game.guess 'x'
+        expect(game.incorrect_guesses).to_not include('a')
+        expect(game.incorrect_guesses).to include('x')
+      end
+    end
+
+    describe '#status' do
+      let(:game) { Game.new 'hangman' }
+
+      context 'when there are 6 incorrect guesses' do
+        it 'is :lost' do
+          %w[x y z q f h a n g l].each { |l| game.guess l }
+          expect(game.status).to eq :lost
+        end
+      end
+
+      context 'when there is less than 6 incorrect guesses' do
+        context 'when all letters were guessed' do
+          it 'is :won' do
+            %w[x y z q f h a n g m].each { |l| game.guess l }
+            expect(game.status).to eq :won
+          end
+        end
+
+        context 'when all letters were not guessed' do
+          it 'is :in_progress' do
+            %w[x y z q f h a n g].each { |l| game.guess l }
+            expect(game.status).to eq :in_progress
+          end
+        end
+      end
+    end
+
     describe '#==' do
       it 'is true given another Hangman game with the same word & guesses' do
         game = Game.new('foo')
