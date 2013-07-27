@@ -3,10 +3,10 @@ require 'hangman/game'
 
 module Hangman
   class << self
-    attr_writer :word_list
+    attr_accessor :word_list
 
     def new_game
-      Game.new
+      Game.new word_list.shuffle[0]
     end
   end
 end
