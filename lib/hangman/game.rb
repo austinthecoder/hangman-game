@@ -1,3 +1,5 @@
+require 'hangman'
+
 module Hangman
   class Game
     def initialize(word)
@@ -8,6 +10,7 @@ module Hangman
     attr_reader :guesses, :word
 
     def guess(letter)
+      raise GameOverError, 'Cannot guess: game is over' if status != :in_progress
       guesses << letter
     end
 
@@ -16,8 +19,15 @@ module Hangman
     end
 
     def status
-      return :lost unless incorrect_guesses.size < 6
-      word_letters.all? { |l| guesses.include? l } ? :won : :in_progress
+      if incorrect_guesses.size < 6
+        if word_letters.all? { |l| guesses.include? l }
+          :won
+        else
+          :in_progress
+        end
+      else
+        :lost
+      end
     end
 
     def ==(other)
@@ -27,7 +37,7 @@ module Hangman
     private
 
     def word_letters
-      @word_letters ||= word.split ''
+      @word_letters ||= word.split('').tap(&:uniq!)
     end
   end
 end

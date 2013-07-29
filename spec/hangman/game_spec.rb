@@ -23,19 +23,31 @@ module Hangman
     end
 
     describe '#guess' do
-      context 'when the letter was already guessed' do
-        it 'does not change the list of guesses' do
-          game = Game.new('foo')
-          game.guess 'a'
-          expect { game.guess 'a' }.to_not change { game.guesses }
+      let(:game) { Game.new 'foo' }
+
+      context 'when the game is in progress' do
+        context 'when the letter was already guessed' do
+          it 'does not change the list of guesses' do
+            game.guess 'a'
+            expect { game.guess 'a' }.to_not change { game.guesses }
+          end
+        end
+
+        context 'when the letter was not already guessed' do
+          it 'adds the letter to the list of guesses' do
+            game = Game.new('foo')
+            game.guess 'a'
+            expect(game.guesses).to include('a')
+          end
         end
       end
 
-      context 'when the letter was not already guessed' do
-        it 'adds the letter to the list of guesses' do
-          game = Game.new('foo')
-          game.guess 'a'
-          expect(game.guesses).to include('a')
+      context 'when the game is not in progress' do
+        it 'raises an error' do
+          %w[f o].each { |l| game.guess l }
+          expect {
+            game.guess 'a'
+          }.to raise_error(Hangman::GameOverError, "Cannot guess: game is over")
         end
       end
     end
