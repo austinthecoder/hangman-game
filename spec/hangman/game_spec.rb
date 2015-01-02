@@ -2,7 +2,7 @@ require 'spec_helper'
 require_relative '../../lib/hangman/game'
 
 module Hangman
-  describe Game do
+  RSpec.describe Game do
     it 'marshals' do
       game = Game.new 'foo'
       game.guess 'a'
@@ -14,7 +14,7 @@ module Hangman
 
     describe '#word' do
       it 'is the given word' do
-        Game.new('foo').word.should == 'foo'
+        expect(Game.new('foo').word).to eq 'foo'
       end
     end
 
